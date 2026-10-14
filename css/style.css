@@ -1,0 +1,547 @@
+/* ==========================================================
+   Nelly's Game Hub
+   ========================================================== */
+
+/* ---------- 1. Colours and fonts, change the look here ---------- */
+:root {
+  --bg-main: #07080c;
+  --text-main: #f3f6ff;
+  --text-soft: #9ca6bd;
+
+  --blue-main: #2f6bff;
+  --blue-bright: #5b8dff;
+  --blue-glow: rgba(47, 107, 255, 0.45);
+  --cyan: #4fd8ff;
+
+  --pixel-font: "Press Start 2P", monospace;
+  --heading-font: "Rajdhani", "Segoe UI", sans-serif;
+  --body-font: "Barlow", "Segoe UI", sans-serif;
+}
+
+/* ---------- 2. Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--body-font);
+  line-height: 1.6;
+}
+
+/* Stops scrolling while the loader is showing */
+body.is-loading { overflow: hidden; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;   /* stops the sticky header covering section titles */
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3 {
+  font-family: var(--heading-font);
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0 0 0.6rem;
+}
+p { margin: 0 0 1rem; }
+
+.container {
+  width: min(100% - 2rem, 1100px);
+  margin-inline: auto;
+}
+
+/* ---------- 3. Boot intro ---------- */
+.boot-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #0a1226 0%, #02030a 70%);
+  transition: opacity 0.9s ease 0.15s, visibility 0s linear 1.05s;
+}
+.boot-intro.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+.boot-intro.is-gone { display: none; }
+
+.boot-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.9s ease, filter 0.9s ease;
+}
+/* When finished, the content pushes toward the viewer and blurs away */
+.boot-intro.is-done .boot-content { transform: scale(1.3); filter: blur(6px); }
+
+.boot-logo-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin-bottom: 1.6rem;
+}
+
+.boot-glow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--blue-glow), transparent 65%);
+  filter: blur(24px);
+  opacity: 0;
+  animation: fade-in 1.6s ease 0.3s forwards, glow-breathe 3s ease-in-out 2s infinite;
+}
+
+.boot-logo {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  opacity: 0;
+  animation: logo-materialise 1.6s ease-out 0.4s forwards, logo-pulse 2.4s ease-in-out 2.1s infinite;
+}
+
+.boot-title {
+  margin: 0 0 1.6rem;
+  font-family: var(--heading-font);
+  font-size: 1.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  opacity: 0;
+  animation: title-in 1.4s ease 1.1s forwards;
+}
+
+/* The beam: a thin track, with a bright fill that grows from the middle */
+.boot-beam {
+  position: relative;
+  width: min(360px, 70vw);
+  height: 2px;
+  background: rgba(79, 216, 255, 0.15);
+  transform: scaleX(0);
+  animation: beam-open 1s ease 0.2s forwards;
+}
+.boot-beam-fill {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 0;                     /* JavaScript changes this */
+  height: 100%;
+  transform: translateX(-50%);  /* keeps it centred so it grows both ways */
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan), 0 0 28px var(--blue-main);
+  transition: width 0.15s linear;
+}
+
+.boot-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(120, 170, 255, 0.55), transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+}
+.boot-intro.is-done .boot-flash { animation: flash-burst 0.9s ease-out; }
+
+/* Floating sparks (the dots are made by JavaScript) */
+.boot-sparks { position: absolute; inset: 0; pointer-events: none; }
+.boot-spark {
+  position: absolute;
+  bottom: -10px;
+  left: var(--x);
+  width: var(--size);
+  height: var(--size);
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  opacity: 0;
+  animation: spark-rise var(--duration) linear infinite;
+  animation-delay: var(--delay);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  position: relative;
+  overflow: hidden;           /* keeps the shine inside the button */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.6rem;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  font-family: var(--heading-font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* The shine: a slanted white strip parked off the left edge */
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+.btn:hover::before { left: 140%; }   /* sweeps across on hover */
+
+.btn-primary {
+  background: var(--blue-main);
+  color: #fff;
+  box-shadow: 0 0 18px var(--blue-glow);
+}
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 30px var(--blue-main);
+}
+
+.btn-ghost {
+  border-color: var(--blue-main);
+  color: var(--text-main);
+  background: transparent;
+}
+.btn-ghost:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 18px rgba(79, 216, 255, 0.3);
+}
+
+.btn-small { padding: 0.55rem 1.1rem; font-size: 1rem; }
+
+/* ---------- Header ---------- */
+.site-header {
+  position: sticky;           /* scrolls with the page, then sticks to the top */
+  top: 0;
+  z-index: 50;
+  background: rgba(7, 8, 12, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(47, 107, 255, 0.25);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 68px;
+}
+
+.brand { display: flex; align-items: center; gap: 0.6rem; }
+.brand-logo { width: 44px; height: 44px; }
+.brand-name {
+  font-family: var(--heading-font);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.main-nav { display: flex; gap: 1.8rem; margin-left: auto; }
+.main-nav a {
+  position: relative;
+  padding: 0.3rem 0;
+  color: var(--text-soft);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+.main-nav a:hover { color: var(--text-main); }
+
+/* Underline that grows from the left on hover */
+.main-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  transition: width 0.25s ease;
+}
+.main-nav a:hover::after { width: 100%; }
+
+/* Hamburger button, hidden on bigger screens */
+.menu-button {
+  display: none;
+  padding: 0.5rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.menu-button span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  margin: 5px 0;
+  background: var(--text-main);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.menu-button[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-button[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.menu-button[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: calc(100vh - 68px);   /* full screen minus the header */
+  display: grid;
+  align-items: center;
+  padding: 3rem 0;
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 2rem;
+}
+
+.eyebrow {
+  margin-bottom: 1.2rem;
+  font-family: var(--pixel-font);
+  font-size: 0.7rem;
+  line-height: 1.8;
+  letter-spacing: 0.08em;
+  color: var(--cyan);
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-size: clamp(2.7rem, 6.5vw, 4.9rem);   /* min, preferred, max */
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+}
+
+/* Gradient colour inside the text */
+.accent-text {
+  background: linear-gradient(90deg, var(--blue-bright), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-sub {
+  max-width: 34rem;
+  font-size: 1.15rem;
+  color: var(--text-soft);
+}
+
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 1.8rem; }
+
+/* Entrance: hidden at first, slides up once the loader is gone */
+.hero-text > * {
+  opacity: 0;
+  transform: translateY(28px);
+}
+body:not(.is-loading) .hero-text > * {
+  animation: rise-in 0.7s ease both;
+}
+body:not(.is-loading) .hero-text > :nth-child(1) { animation-delay: 0.1s; }
+body:not(.is-loading) .hero-text > :nth-child(2) { animation-delay: 0.25s; }
+body:not(.is-loading) .hero-text > :nth-child(3) { animation-delay: 0.4s; }
+body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
+
+/* Logo side */
+.hero-visual { position: relative; display: grid; place-items: center; }
+
+.hero-glow {
+  position: absolute;
+  width: 80%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--blue-glow), transparent 70%);
+  filter: blur(30px);
+  animation: glow-breathe 4s ease-in-out infinite;
+}
+
+.hero-ring {
+  position: relative;
+  width: min(100%, 360px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  animation: float 5s ease-in-out infinite;
+}
+
+.hero-logo {
+  width: 78%;
+  height: auto;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Hover reaction, only on devices that actually have a mouse */
+@media (hover: hover) {
+  .hero-ring:hover .hero-logo {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 14px var(--cyan)) drop-shadow(0 0 40px var(--blue-main));
+    animation: rumble 0.45s linear 1;     /* plays once per hover */
+  }
+}
+
+/* ---------- Background scene ---------- */
+.bg-scene {
+  position: fixed;          /* stays put while the page scrolls */
+  inset: 0;
+  z-index: -1;              /* behind all the page content */
+  overflow: hidden;
+  pointer-events: none;     /* clicks pass straight through it */
+}
+.starfield { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* Soft blue glow rising from the bottom, like a sunrise */
+.bg-horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 65%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(47, 107, 255, 0.32), transparent 65%);
+}
+
+/* Neon grid floor */
+.grid-floor {
+  position: absolute;
+  left: -50%;
+  width: 200%;              /* extra wide so the edges never show when tilted */
+  bottom: 0;
+  height: 70%;
+  background:
+    linear-gradient(rgba(79, 216, 255, 0.5) 2px, transparent 2px) 0 0 / 70px 70px,
+    linear-gradient(90deg, rgba(79, 216, 255, 0.5) 2px, transparent 2px) 0 0 / 70px 70px;
+  transform: perspective(500px) rotateX(55deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 20%, transparent 85%);
+  mask-image: linear-gradient(to top, #000 20%, transparent 85%);
+  animation: grid-move 1.6s linear infinite;
+}
+
+/* Shooting stars */
+.shooting-star {
+  position: absolute;
+  top: var(--top);
+  left: var(--left);
+  width: 130px;
+  height: 2px;
+  background: linear-gradient(90deg, #fff, transparent);
+  opacity: 0;
+  animation: shoot 8s linear infinite;
+  animation-delay: var(--delay);
+}
+
+/* Floating shapes */
+.shape {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--size);
+  height: var(--size);
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  opacity: 0.2;
+  filter: drop-shadow(0 0 6px var(--cyan));
+  animation: shape-drift var(--speed) ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+.shape-blue {
+  stroke: var(--blue-bright);
+  filter: drop-shadow(0 0 6px var(--blue-main));
+}
+
+/* ---------- 4. Animations (keyframes) ---------- */
+
+@keyframes logo-pulse {
+  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 6px var(--blue-glow)); }
+  50%      { transform: scale(1.08); filter: drop-shadow(0 0 22px var(--blue-main)); }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-16px); }
+}
+@keyframes glow-breathe {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.12); }
+}
+@keyframes rumble {
+  0%, 100% { transform: translate(0, 0)      rotate(0deg)  scale(1.08); }
+  20%      { transform: translate(-3px, 2px)  rotate(-2deg) scale(1.08); }
+  40%      { transform: translate(3px, -2px)  rotate(2deg)  scale(1.08); }
+  60%      { transform: translate(-2px, -3px) rotate(-1deg) scale(1.08); }
+  80%      { transform: translate(2px, 3px)   rotate(1deg)  scale(1.08); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes logo-materialise {
+  from { opacity: 0; transform: scale(1.25); filter: blur(14px) brightness(3); }
+  to   { opacity: 1; transform: scale(1);    filter: blur(0) brightness(1); }
+}
+@keyframes title-in {
+  from { opacity: 0; letter-spacing: 0.6em; }
+  to   { opacity: 1; letter-spacing: 0.18em; }
+}
+@keyframes beam-open {
+  to { transform: scaleX(1); }
+}
+@keyframes flash-burst {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes spark-rise {
+  0%   { opacity: 0;   transform: translate(0, 0); }
+  15%  { opacity: 0.9; }
+  100% { opacity: 0;   transform: translate(var(--sway), -105vh); }
+}
+/* ---------- Phone ---------- */
+@media (max-width: 760px) {
+  .menu-button { display: block; }
+  .header-cta { display: none; }
+
+  .main-nav {
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    margin-left: 0;
+    max-height: 0;
+    overflow: hidden;
+    background: var(--bg-main);
+    border-bottom: 1px solid rgba(47, 107, 255, 0.25);
+    transition: max-height 0.3s ease;
+  }
+  .main-nav.is-open { max-height: 320px; }
+  .main-nav a { padding: 1rem 1.2rem; border-top: 1px solid rgba(47, 107, 255, 0.15); }
+  .main-nav a::after { display: none; }
+
+  .hero { padding: 2rem 0 3rem; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-visual { order: -1; }          /* logo moves above the text */
+  .hero-ring { width: 210px; }
+  .hero-actions .btn { flex: 1 1 100%; }
+}
+
+/* People who set "reduce motion" on their device get a calmer page */
+@media (prefers-reduced-motion: reduce) {
+  .grid-floor, .shape { animation: none; }
+  .shooting-star { display: none; }
+    .boot-spark { display: none; }
+}

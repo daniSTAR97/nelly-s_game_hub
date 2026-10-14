@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nelly's Game Hub</title>
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="is-loading">
+
+    <!-- BOOT INTRO -->
+    <div class="boot-intro" id="bootIntro">
+      <div class="boot-sparks" id="bootSparks"></div>
+      <div class="boot-flash"></div>
+
+      <div class="boot-content">
+        <div class="boot-logo-wrap">
+          <div class="boot-glow"></div>
+          <img src="images/logo.png" alt="" class="boot-logo">
+        </div>
+
+        <p class="boot-title">Nelly's Game Hub</p>
+
+        <div class="boot-beam">
+          <div class="boot-beam-fill" id="bootBeamFill"></div>
+        </div>
+      </div>
+    </div>
+
+      <!-- BACKGROUND SCENE (sits behind everything) -->
+    <div class="bg-scene" aria-hidden="true">
+      <canvas class="starfield" id="starfield"></canvas>
+
+      <span class="shooting-star" style="--left: 85%; --top: 8%;  --delay: 1s;"></span>
+      <span class="shooting-star" style="--left: 60%; --top: 20%; --delay: 5s;"></span>
+
+      <div class="bg-horizon"></div>
+      <div class="grid-floor"></div>
+
+      <!-- Floating shapes: circle, square, triangle, plus -->
+      <svg class="shape" style="--x: 6%; --y: 20%; --size: 38px; --speed: 11s; --delay: 0s;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
+      <svg class="shape shape-blue" style="--x: 90%; --y: 16%; --size: 30px; --speed: 9s; --delay: -3s;" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>
+      <svg class="shape" style="--x: 46%; --y: 9%; --size: 28px; --speed: 13s; --delay: -6s;" viewBox="0 0 24 24"><path d="M12 3 L22 21 H2 Z"/></svg>
+      <svg class="shape shape-blue" style="--x: 12%; --y: 64%; --size: 34px; --speed: 10s; --delay: -2s;" viewBox="0 0 24 24"><path d="M9 3H15V9H21V15H15V21H9V15H3V9H9Z"/></svg>
+      <svg class="shape" style="--x: 88%; --y: 60%; --size: 40px; --speed: 12s; --delay: -5s;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
+      <svg class="shape shape-blue" style="--x: 70%; --y: 38%; --size: 26px; --speed: 14s; --delay: -8s;" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>
+      <svg class="shape" style="--x: 30%; --y: 76%; --size: 32px; --speed: 10s; --delay: -4s;" viewBox="0 0 24 24"><path d="M12 3 L22 21 H2 Z"/></svg>
+    </div>
+
+  <!-- HEADER -->
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+
+      <a href="#top" class="brand" aria-label="Nelly's Game Hub home">
+        <img src="images/logo.png" alt="" class="brand-logo" width="44" height="44">
+        <span class="brand-name">Nelly's Game Hub</span>
+      </a>
+
+      <nav class="main-nav" id="mainNav" aria-label="Main">
+        <a href="#services">Services</a>
+        <a href="#book">Book a repair</a>
+        <a href="#shop">Shop</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <a href="#" class="btn btn-small btn-primary header-cta"
+         data-whatsapp="Hello Nelly's Game Hub, I need some help.">Chat on WhatsApp</a>
+
+      <button class="menu-button" id="menuButton" aria-label="Open menu"
+              aria-expanded="false" aria-controls="mainNav">
+        <span></span><span></span><span></span>
+      </button>
+
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="container hero-inner">
+
+        <div class="hero-text">
+          <p class="eyebrow">Game installs / Repairs / Sales</p>
+
+          <h1>
+            Games installed.<br>
+            Pads fixed.<br>
+            <span class="accent-text">Consoles back to life.</span>
+          </h1>
+
+          <p class="hero-sub">
+            We install games on your console, repair pads and consoles, and sell both.
+            Tell us what you need on WhatsApp and we will sort you out.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#" class="btn btn-primary"
+               data-whatsapp="Hello Nelly's Game Hub, I need some help.">Chat on WhatsApp</a>
+            <a href="#services" class="btn btn-ghost">See what we do</a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-glow"></div>
+          <div class="hero-ring">
+            <img src="images/logo.png" alt="Nelly's Game Hub logo" class="hero-logo" width="300" height="300">
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
