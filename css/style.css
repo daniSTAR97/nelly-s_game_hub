@@ -397,6 +397,7 @@ body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
   pointer-events: none;     /* clicks pass straight through it */
 }
 .starfield { position: absolute; inset: 0; width: 100%; height: 100%; }
+.waves { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 /* Soft blue glow rising from the bottom, like a sunrise */
 .bg-horizon {
@@ -406,23 +407,6 @@ body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
   bottom: 0;
   height: 65%;
   background: radial-gradient(ellipse at 50% 100%, rgba(47, 107, 255, 0.32), transparent 65%);
-}
-
-/* Neon grid floor */
-.grid-floor {
-  position: absolute;
-  left: -50%;
-  width: 200%;              /* extra wide so the edges never show when tilted */
-  bottom: 0;
-  height: 70%;
-  background:
-    linear-gradient(rgba(79, 216, 255, 0.5) 2px, transparent 2px) 0 0 / 70px 70px,
-    linear-gradient(90deg, rgba(79, 216, 255, 0.5) 2px, transparent 2px) 0 0 / 70px 70px;
-  transform: perspective(500px) rotateX(55deg);
-  transform-origin: 50% 100%;
-  -webkit-mask-image: linear-gradient(to top, #000 20%, transparent 85%);
-  mask-image: linear-gradient(to top, #000 20%, transparent 85%);
-  animation: grid-move 1.6s linear infinite;
 }
 
 /* Shooting stars */
@@ -457,6 +441,257 @@ body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
 .shape-blue {
   stroke: var(--blue-bright);
   filter: drop-shadow(0 0 6px var(--blue-main));
+}
+
+/* ---------- Sections ---------- */
+.section { position: relative; padding: 5.5rem 0; }
+.section-head { max-width: 38rem; margin-bottom: 2.4rem; }
+.section h2 {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  text-transform: uppercase;
+}
+
+/* ---------- Service menu ---------- */
+.service-menu {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  padding: 1.5rem 0 1rem;       /* room above so lifted tiles are not cut off */
+}
+
+.service-tile {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 1.8rem 1.5rem 1.5rem;
+  background: linear-gradient(180deg, rgba(20, 28, 52, 0.8), rgba(10, 14, 28, 0.9));
+  border: 1px solid rgba(79, 216, 255, 0.12);
+  border-radius: 16px;
+  transform: perspective(800px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 0.25s ease, opacity 0.3s ease, filter 0.3s ease,
+              border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+}
+.service-tile:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
+
+/* The tile you are on: lifts, grows, glows */
+.service-tile.is-focused {
+  z-index: 2;
+  transform: perspective(800px) translateY(-12px) scale(1.05)
+             rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  border-color: var(--cyan);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 28px rgba(79, 216, 255, 0.25);
+}
+
+/* Spotlight that follows the pointer inside the tile */
+.service-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at var(--glow-x, 50%) var(--glow-y, 0%), rgba(79, 216, 255, 0.2), transparent 55%);
+  transition: opacity 0.3s ease;
+}
+.service-tile.is-focused::after { opacity: 1; }
+
+/* One shine sweep each time a tile becomes the focused one */
+.service-tile::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 50%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  transform: skewX(-20deg);
+}
+.service-tile.is-focused::before { animation: tile-shine 0.8s ease; }
+
+.tile-number {
+  margin-bottom: 1.2rem;
+  font-family: var(--pixel-font);
+  font-size: 0.65rem;
+  color: rgba(79, 216, 255, 0.55);
+}
+
+.tile-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.2rem;
+  border-radius: 14px;
+  background: rgba(79, 216, 255, 0.08);
+  border: 1px solid rgba(79, 216, 255, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.tile-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.service-tile.is-focused .tile-icon {
+  transform: scale(1.12);
+  box-shadow: 0 0 22px rgba(79, 216, 255, 0.4);
+}
+
+.service-tile h3 {
+  font-size: 1.65rem;
+  text-transform: uppercase;
+}
+.service-tile p {
+  flex-grow: 1;
+  font-size: 1rem;
+  color: var(--text-soft);
+}
+
+.tile-action {
+  padding-top: 0.6rem;
+  font-family: var(--heading-font);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.tile-action::after {
+  content: "\2192";
+  display: inline-block;
+  margin-left: 0.45rem;
+  transition: transform 0.25s ease;
+}
+.service-tile.is-focused .tile-action::after { transform: translateX(6px); }
+
+.menu-hint {
+  display: none;
+  margin: 1.2rem 0 0;
+  font-family: var(--pixel-font);
+  font-size: 0.6rem;
+  line-height: 1.8;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+/* Only on devices with a real mouse: dim the tiles you are not on, show the hint */
+@media (hover: hover) {
+  .service-menu.is-browsing .service-tile:not(.is-focused) {
+    opacity: 0.5;
+    filter: saturate(0.6);
+    transform: perspective(800px) scale(0.97);
+  }
+  .menu-hint { display: block; }
+}
+
+/* ---------- Scroll reveal (only when JavaScript is on) ---------- */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.js .reveal.is-visible { opacity: 1; transform: none; }
+
+.js .stagger-group { opacity: 0; }
+.js .stagger-group.is-visible { opacity: 1; }
+.stagger-group.is-visible .service-tile {
+  animation: tile-rise 0.7s ease backwards;
+  animation-delay: calc(var(--i) * 0.12s);
+}
+
+/* ---------- Trophy pop-ups ---------- */
+.trophy-area {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  pointer-events: none;          /* never blocks clicks on the page */
+}
+
+.trophy {
+  --tier-color: #d08a4a;
+  --tier-glow: rgba(208, 138, 74, 0.35);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: min(340px, calc(100vw - 2rem));
+  padding: 0.8rem 1.1rem 0.8rem 0.8rem;
+  background: rgba(8, 12, 24, 0.94);
+  border: 1px solid var(--tier-color);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 22px var(--tier-glow);
+  animation: trophy-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+}
+.trophy[data-tier="silver"] { --tier-color: #c9d3ea; --tier-glow: rgba(201, 211, 234, 0.3); }
+.trophy[data-tier="gold"]   { --tier-color: #ffd34d; --tier-glow: rgba(255, 211, 77, 0.4); }
+.trophy.is-leaving { animation: trophy-out 0.5s ease forwards; }
+
+/* A shine passes over the card as it arrives */
+.trophy::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  transform: skewX(-20deg);
+  animation: trophy-shine 1s ease 0.5s both;
+}
+
+.trophy-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--tier-color);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  animation: trophy-pop 0.7s ease 0.3s both;
+}
+.trophy-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: var(--tier-color);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.trophy-label {
+  margin: 0 0 0.35rem;
+  font-family: var(--pixel-font);
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tier-color);
+}
+.trophy-name {
+  margin: 0;
+  font-family: var(--heading-font);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.trophy-note {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  color: var(--text-soft);
 }
 
 /* ---------- 4. Animations (keyframes) ---------- */
@@ -509,6 +744,26 @@ body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
   15%  { opacity: 0.9; }
   100% { opacity: 0;   transform: translate(var(--sway), -105vh); }
 }
+@keyframes tile-shine {
+  to { left: 130%; }
+}
+@keyframes tile-rise {
+  from { opacity: 0; transform: perspective(800px) rotateX(0deg) rotateY(0deg) translateY(50px); }
+}
+@keyframes trophy-in {
+  from { opacity: 0; transform: translateX(-120%); }
+}
+@keyframes trophy-out {
+  to { opacity: 0; transform: translateX(-120%); }
+}
+@keyframes trophy-pop {
+  0%   { transform: scale(0); }
+  60%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+@keyframes trophy-shine {
+  to { left: 130%; }
+}
 /* ---------- Phone ---------- */
 @media (max-width: 760px) {
   .menu-button { display: block; }
@@ -537,11 +792,21 @@ body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
   .hero-visual { order: -1; }          /* logo moves above the text */
   .hero-ring { width: 210px; }
   .hero-actions .btn { flex: 1 1 100%; }
+  .section { padding: 3.5rem 0; }
+  .service-menu { grid-template-columns: 1fr; }
 }
 
 /* People who set "reduce motion" on their device get a calmer page */
 @media (prefers-reduced-motion: reduce) {
-  .grid-floor, .shape { animation: none; }
+  .shape { animation: none; }
   .shooting-star { display: none; }
-    .boot-spark { display: none; }
+  .boot-spark { display: none; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+  .js .stagger-group { opacity: 1; }
+  .stagger-group.is-visible .service-tile { animation: none; }
+  .trophy, .trophy::after, .trophy-icon { animation: none; }
+}
+
+@media (max-width: 980px) {
+  .service-menu { grid-template-columns: repeat(2, 1fr); }
 }

@@ -42,7 +42,7 @@
       <span class="shooting-star" style="--left: 60%; --top: 20%; --delay: 5s;"></span>
 
       <div class="bg-horizon"></div>
-      <div class="grid-floor"></div>
+      <canvas class="waves" id="waveCanvas"></canvas>
 
       <!-- Floating shapes: circle, square, triangle, plus -->
       <svg class="shape" style="--x: 6%; --y: 20%; --size: 38px; --speed: 11s; --delay: 0s;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
@@ -118,7 +118,68 @@
       </div>
     </section>
 
+        <!-- SERVICES -->
+    <section class="section" id="services">
+      <div class="container">
+
+        <div class="section-head reveal">
+          <p class="eyebrow">Select a service</p>
+          <h2>What do you need today?</h2>
+        </div>
+
+        <div class="service-menu stagger-group" id="serviceMenu">
+
+          <article class="service-tile" tabindex="0" style="--i: 0;">
+            <span class="tile-number">01</span>
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            </div>
+            <h3>Game installation</h3>
+            <p>Want new games on your console? We install them for you, so you can skip the stress and just play.</p>
+            <a href="#" class="tile-action" data-whatsapp="Hello Nelly's Game Hub, I want to get games installed on my console.">Ask about installation</a>
+          </article>
+
+          <article class="service-tile" tabindex="0" style="--i: 1;">
+            <span class="tile-number">02</span>
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h4m-2-2v4m7-1h.01M18 11h.01M17.3 5H6.7a4 4 0 00-3.9 3.2l-1.6 7A3 3 0 004 19a3 3 0 002.4-1.2L8 16h8l1.6 1.8A3 3 0 0020 19a3 3 0 002.8-3.8l-1.6-7A4 4 0 0017.3 5z"/></svg>
+            </div>
+            <h3>Pad repairs</h3>
+            <p>Stick drift, dead buttons, a pad that will not charge or connect? Bring it in and we will take a look.</p>
+            <a href="#" class="tile-action" data-whatsapp="Hello Nelly's Game Hub, I need my game pad repaired.">Book a pad repair</a>
+          </article>
+
+          <article class="service-tile" tabindex="0" style="--i: 2;">
+            <span class="tile-number">03</span>
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <h3>Console repairs</h3>
+            <p>Console not powering on, overheating, or acting up? Bring it in and we will find out what is going on.</p>
+            <a href="#" class="tile-action" data-whatsapp="Hello Nelly's Game Hub, I need my console repaired.">Book a console repair</a>
+          </article>
+
+          <article class="service-tile" tabindex="0" style="--i: 3;">
+            <span class="tile-number">04</span>
+            <div class="tile-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+            </div>
+            <h3>Console and pad sales</h3>
+            <p>Looking to buy a console or a pad? Message us to see what is available and the current price.</p>
+            <a href="#" class="tile-action" data-whatsapp="Hello Nelly's Game Hub, I want to buy a console or a game pad.">Ask for prices</a>
+          </article>
+
+        </div>
+
+        <p class="menu-hint">Use arrow keys to browse, Enter to select</p>
+
+      </div>
+    </section>
+
   </main>
+
+    <!-- Trophy pop-ups appear here -->
+  <div class="trophy-area" id="trophyArea" role="status" aria-live="polite"></div>
 
   <script src="js/main.js"></script>
 </body>
