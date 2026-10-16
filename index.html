@@ -136,7 +136,7 @@
             </div>
             <h3>Game installation</h3>
             <p>Want new games on your console? We install them for you, so you can skip the stress and just play.</p>
-            <a href="#" class="tile-action" data-whatsapp="Hello Nelly's Game Hub, I want to get games installed on my console.">Ask about installation</a>
+            <a href="#book" class="tile-action" data-help="Game installation">Ask about installation</a>
           </article>
 
           <article class="service-tile" tabindex="0" style="--i: 1;">
@@ -146,7 +146,7 @@
             </div>
             <h3>Pad repairs</h3>
             <p>Stick drift, dead buttons, a pad that will not charge or connect? Bring it in and we will take a look.</p>
-            <a href="#" class="tile-action" data-whatsapp="Hello Nelly's Game Hub, I need my game pad repaired.">Book a pad repair</a>
+            <a href="#book" class="tile-action" data-help="Pad repair">Book a pad repair</a>
           </article>
 
           <article class="service-tile" tabindex="0" style="--i: 2;">
@@ -156,7 +156,7 @@
             </div>
             <h3>Console repairs</h3>
             <p>Console not powering on, overheating, or acting up? Bring it in and we will find out what is going on.</p>
-            <a href="#" class="tile-action" data-whatsapp="Hello Nelly's Game Hub, I need my console repaired.">Book a console repair</a>
+            <a href="#book" class="tile-action" data-help="Console repair">Book a console repair</a>
           </article>
 
           <article class="service-tile" tabindex="0" style="--i: 3;">
@@ -166,12 +166,127 @@
             </div>
             <h3>Console and pad sales</h3>
             <p>Looking to buy a console or a pad? Message us to see what is available and the current price.</p>
-            <a href="#" class="tile-action" data-whatsapp="Hello Nelly's Game Hub, I want to buy a console or a game pad.">Ask for prices</a>
+            <a href="#shop" class="tile-action">Ask for prices</a>
           </article>
 
         </div>
 
         <p class="menu-hint">Use arrow keys to browse, Enter to select</p>
+
+      </div>
+    </section>
+
+        <!-- BOOK A REPAIR -->
+    <section class="section section-alt" id="book">
+      <div class="container book-layout">
+
+        <div class="book-intro reveal">
+          <p class="eyebrow">New quest</p>
+          <h2>Tell us what is wrong</h2>
+          <p>Fill this in and it opens WhatsApp with your message already typed out. Nothing is sent until you press send there.</p>
+
+          <ol class="quest-steps">
+            <li>Choose what you need</li>
+            <li>Tell us the problem</li>
+            <li>Send it on WhatsApp</li>
+          </ol>
+        </div>
+
+        <form class="book-form reveal" id="repairForm" novalidate>
+
+          <div class="field">
+            <label for="customerName">Your name <span class="optional">(optional)</span></label>
+            <input type="text" id="customerName" name="customerName" placeholder="e.g. Tunde" autocomplete="name">
+          </div>
+
+          <fieldset class="field">
+            <legend>What do you need?</legend>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="helpType" value="Pad repair" checked><span>Pad repair</span></label>
+              <label class="chip"><input type="radio" name="helpType" value="Console repair"><span>Console repair</span></label>
+              <label class="chip"><input type="radio" name="helpType" value="Game installation"><span>Game installation</span></label>
+              <label class="chip"><input type="radio" name="helpType" value="Buy a console or pad"><span>Buy a console or pad</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend>Which console?</legend>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="consoleType" value="PS5" checked><span>PS5</span></label>
+              <label class="chip"><input type="radio" name="consoleType" value="PS4"><span>PS4</span></label>
+              <label class="chip"><input type="radio" name="consoleType" value="PS3"><span>PS3</span></label>
+              <label class="chip"><input type="radio" name="consoleType" value="Xbox Series X/S"><span>Xbox Series X/S</span></label>
+              <label class="chip"><input type="radio" name="consoleType" value="Xbox One"><span>Xbox One</span></label>
+              <label class="chip"><input type="radio" name="consoleType" value="Xbox 360"><span>Xbox 360</span></label>
+              <label class="chip"><input type="radio" name="consoleType" value="Nintendo Switch"><span>Nintendo Switch</span></label>
+              <label class="chip"><input type="radio" name="consoleType" value="Other"><span>Other</span></label>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="problemNote">What is the problem? <span class="optional">(optional)</span></label>
+            <textarea id="problemNote" name="problemNote" rows="4" placeholder="e.g. Left stick keeps drifting, or the console shuts off after a few minutes"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">Send on WhatsApp</button>
+        </form>
+
+      </div>
+    </section>
+
+    <!-- SHOP -->
+    <section class="section" id="shop">
+      <div class="container">
+
+        <div class="section-head reveal">
+          <p class="eyebrow">Shop</p>
+          <h2>Consoles and pads</h2>
+          <p class="loading-note">Price list loading<span class="dots">...</span></p>
+          <p class="section-note">Message us for what is in stock and today's price.</p>
+        </div>
+
+        <div class="shop-grid">
+          <article class="shop-tile reveal">
+            <h3>Consoles</h3>
+            <p>PlayStation, Xbox and more. Ask what we have right now.</p>
+            <a href="#" class="btn btn-ghost btn-small" data-whatsapp="Hello Nelly's Game Hub, I want to buy a console. What do you have in stock and how much?">Ask for price</a>
+          </article>
+
+          <article class="shop-tile reveal">
+            <h3>Game pads</h3>
+            <p>Replacement and spare pads for your console.</p>
+            <a href="#" class="btn btn-ghost btn-small" data-whatsapp="Hello Nelly's Game Hub, I want to buy a game pad. What do you have in stock and how much?">Ask for price</a>
+          </article>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section section-alt" id="contact">
+      <div class="container contact-layout">
+
+        <div class="reveal">
+          <p class="eyebrow">Contact</p>
+          <h2>Let's talk</h2>
+          <p class="contact-text">The fastest way to reach us is WhatsApp. You can also call.</p>
+
+          <div class="contact-actions">
+            <a href="#" class="btn btn-primary" data-whatsapp="Hello Nelly's Game Hub, I need some help.">Chat on WhatsApp</a>
+            <a href="#" class="btn btn-ghost" id="callButton">Call us</a>
+          </div>
+        </div>
+
+        <ul class="contact-list reveal">
+          <li>
+            <span class="contact-label">WhatsApp and phone</span>
+            <span class="contact-value" id="phoneText"></span>
+          </li>
+          <li>
+            <span class="contact-label">Shop location</span>
+            <span class="contact-value" id="addressText"></span>
+          </li>
+        </ul>
 
       </div>
     </section>

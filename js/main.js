@@ -443,7 +443,9 @@ const trophyList = {
   welcome:   { tier: "bronze", title: "Welcome, Player 1", note: "You found Nelly's Game Hub." },
   services:  { tier: "bronze", title: "Window Shopper",    note: "You checked out what we do." },
   browsing:  { tier: "silver", title: "Menu Master",       note: "You browsed every service." },
-  contacted: { tier: "gold",   title: "Player 2 Joined",   note: "You started a chat with us." }
+  contacted: { tier: "gold",   title: "Player 2 Joined",   note: "You started a chat with us." },
+  repair:    { tier: "gold",   title: "Repair Requested",  note: "Hit send on WhatsApp to lock it in." },
+  finale:    { tier: "silver", title: "Final Level",       note: "You made it to the bottom of the page." }
 };
 
 const trophyIconMarkup =
@@ -513,3 +515,58 @@ if ("IntersectionObserver" in window) {
 document.querySelectorAll("[data-whatsapp]").forEach(function (button) {
   button.addEventListener("click", function () { unlockTrophy("contacted"); });
 });
+
+// 3. Reaching the contact section
+const contactSection = document.getElementById("contact");
+if ("IntersectionObserver" in window) {
+  const contactWatcher = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting) {
+      unlockTrophy("finale");
+      contactWatcher.disconnect();
+    }
+  }, { threshold: 0.4 });
+  contactWatcher.observe(contactSection);
+}
+
+/* ---------- 9. Booking form, contact details and footer ---------- */
+const repairForm = document.getElementById("repairForm");
+
+repairForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const customerName = document.getElementById("customerName").value.trim();
+  const helpType = repairForm.elements["helpType"].value;       // the chip that is ticked
+  const consoleType = repairForm.elements["consoleType"].value;
+  const problemNote = document.getElementById("problemNote").value.trim();
+
+  let message = "Hello Nelly's Game Hub, ";
+  if (customerName) {
+    message += "my name is " + customerName + ". ";
+  }
+  message += "I need help with: " + helpType + " (" + consoleType + ").";
+  if (problemNote) {
+    message += "\n\nDetails: " + problemNote;
+  }
+
+  window.open(buildWhatsAppLink(message), "_blank", "noopener");
+  unlockTrophy("repair");
+});
+
+// Service tiles that carry data-help tick the matching chip before scrolling to the form
+document.querySelectorAll("[data-help]").forEach(function (link) {
+  link.addEventListener("click", function () {
+    repairForm.querySelectorAll('input[name="helpType"]').forEach(function (radio) {
+      radio.checked = (radio.value === link.dataset.help);
+    });
+  });
+});
+
+// Contact details
+document.getElementById("phoneText").textContent = shopDetails.phoneNumber;
+document.getElementById("callButton").href = "tel:+" + whatsappNumber;
+document.getElementById("addressText").textContent = shopDetails.address
+  ? shopDetails.address
+  : "Message us on WhatsApp and we will send the location";
+
+// Footer year
+document.getElementById("currentYear").textContent = new Date().getFullYear();

@@ -606,6 +606,208 @@ body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
   animation-delay: calc(var(--i) * 0.12s);
 }
 
+/* ---------- Book a repair ---------- */
+.section-alt {
+  background: rgba(7, 10, 20, 0.72);
+  border-block: 1px solid rgba(79, 216, 255, 0.1);
+}
+
+.book-layout {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 3rem;
+  align-items: start;
+}
+.book-intro p { color: var(--text-soft); }
+
+/* Numbered steps that look like a quest list */
+.quest-steps {
+  counter-reset: step;
+  list-style: none;
+  margin: 1.6rem 0 0;
+  padding: 0;
+}
+.quest-steps li {
+  counter-increment: step;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 0.9rem;
+  font-weight: 500;
+}
+.quest-steps li::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--cyan);
+  border-radius: 8px;
+  font-family: var(--pixel-font);
+  font-size: 0.7rem;
+  color: var(--cyan);
+  background: rgba(79, 216, 255, 0.08);
+}
+
+.book-form {
+  padding: 1.8rem;
+  background: linear-gradient(180deg, rgba(20, 28, 52, 0.8), rgba(10, 14, 28, 0.9));
+  border: 1px solid rgba(79, 216, 255, 0.15);
+  border-radius: 16px;
+}
+
+.field { margin: 0 0 1.4rem; padding: 0; border: 0; min-width: 0; }
+label, legend {
+  display: block;
+  margin-bottom: 0.55rem;
+  padding: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.optional { color: var(--text-soft); font-weight: 400; }
+
+input[type="text"], textarea {
+  width: 100%;
+  padding: 0.8rem 0.95rem;
+  background: rgba(5, 8, 16, 0.8);
+  border: 1px solid rgba(79, 216, 255, 0.2);
+  border-radius: 10px;
+  color: var(--text-main);
+  font: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+input::placeholder, textarea::placeholder { color: #5d667c; }
+input[type="text"]:focus, textarea:focus {
+  outline: none;
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(79, 216, 255, 0.18);
+}
+textarea { resize: vertical; }
+
+/* Option chips: real radio buttons, invisible, with a styled label on top */
+.chips { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.chip { position: relative; margin: 0; }
+.chip input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.chip span {
+  display: block;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(79, 216, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-soft);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.chip:hover span { border-color: var(--cyan); color: var(--text-main); }
+.chip input:checked + span {
+  background: rgba(79, 216, 255, 0.14);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 14px rgba(79, 216, 255, 0.25);
+}
+.chip input:focus-visible + span { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+.btn-full { width: 100%; }
+
+/* ---------- Shop ---------- */
+.section-note { color: var(--text-soft); }
+
+.loading-note {
+  margin-bottom: 0.6rem;
+  font-family: var(--pixel-font);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+/* The dots appear one at a time: the box widens in four jumps and clips the "..." */
+.dots {
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: dots-grow 1.4s steps(4) infinite;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+.shop-tile {
+  padding: 2rem;
+  background:
+    linear-gradient(135deg, rgba(79, 216, 255, 0.1), transparent 60%),
+    rgba(12, 17, 32, 0.85);
+  border: 1px solid rgba(79, 216, 255, 0.15);
+  border-radius: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.shop-tile:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 28px rgba(79, 216, 255, 0.18);
+}
+.shop-tile h3 { font-size: 1.9rem; text-transform: uppercase; }
+.shop-tile p { color: var(--text-soft); }
+
+/* ---------- Contact ---------- */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+.contact-text { color: var(--text-soft); }
+.contact-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.5rem; }
+
+.contact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(79, 216, 255, 0.15);
+  border-radius: 16px;
+  background: rgba(12, 17, 32, 0.85);
+}
+.contact-list li { padding: 1.3rem 1.6rem; }
+.contact-list li + li { border-top: 1px solid rgba(79, 216, 255, 0.12); }
+.contact-label {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-family: var(--pixel-font);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.contact-value { font-size: 1.2rem; font-weight: 500; }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  padding: 1.6rem 0;
+  background: rgba(5, 8, 16, 0.85);
+  border-top: 1px solid rgba(79, 216, 255, 0.12);
+}
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+}
+.footer-inner p { margin: 0; }
+.footer-inner a { transition: color 0.2s ease; }
+.footer-inner a:hover { color: var(--cyan); }
+
 /* ---------- Trophy pop-ups ---------- */
 .trophy-area {
   position: fixed;
@@ -764,6 +966,9 @@ body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
 @keyframes trophy-shine {
   to { left: 130%; }
 }
+@keyframes dots-grow {
+  to { width: 4ch; }
+}
 /* ---------- Phone ---------- */
 @media (max-width: 760px) {
   .menu-button { display: block; }
@@ -793,7 +998,8 @@ body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
   .hero-ring { width: 210px; }
   .hero-actions .btn { flex: 1 1 100%; }
   .section { padding: 3.5rem 0; }
-  .service-menu { grid-template-columns: 1fr; }
+  .service-menu, .shop-grid { grid-template-columns: 1fr; }
+  .contact-actions .btn { flex: 1 1 100%; }
 }
 
 /* People who set "reduce motion" on their device get a calmer page */
@@ -805,8 +1011,10 @@ body:not(.is-loading) .hero-text > :nth-child(4) { animation-delay: 0.55s; }
   .js .stagger-group { opacity: 1; }
   .stagger-group.is-visible .service-tile { animation: none; }
   .trophy, .trophy::after, .trophy-icon { animation: none; }
+  .dots { animation: none; width: auto; }
 }
 
 @media (max-width: 980px) {
   .service-menu { grid-template-columns: repeat(2, 1fr); }
+  .book-layout, .contact-layout { grid-template-columns: 1fr; gap: 2rem; }
 }
