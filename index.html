@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Nelly's Game Hub">
+  <meta property="og:description" content="Game installation, pad and console repairs, and console sales. Chat with us on WhatsApp.">
+  <meta property="og:image" content="https://YOUR-SITE-ADDRESS/images/share.png">
+  <meta name="twitter:card" content="summary_large_image">
   <title>Nelly's Game Hub</title>
   <link rel="icon" type="image/png" href="images/favicon.png">
 
@@ -55,7 +60,7 @@
     </div>
 
   <!-- HEADER -->
-  <header class="site-header" id="top">
+  <header class="site-header">
     <div class="container header-inner">
 
       <a href="#top" class="brand" aria-label="Nelly's Game Hub home">
@@ -176,6 +181,26 @@
       </div>
     </section>
 
+        <!-- WATCH US WORK -->
+    <section class="section" id="watch">
+      <div class="container">
+
+        <div class="section-head reveal">
+          <p class="eyebrow">Watch us work</p>
+          <h2>See the repairs happen</h2>
+          <p class="section-note">Real pads and consoles on the bench. Press play on any video.</p>
+        </div>
+
+        <div class="video-grid reveal" id="videoGrid"></div>
+        <p class="video-empty" id="videoEmpty">New videos are on the way. Check back soon.</p>
+
+        <div class="video-footer">
+          <a href="#" class="btn btn-ghost" id="channelButton" hidden>Subscribe on YouTube</a>
+        </div>
+
+      </div>
+    </section>
+
         <!-- BOOK A REPAIR -->
     <section class="section section-alt" id="book">
       <div class="container book-layout">
@@ -292,9 +317,21 @@
     </section>
 
   </main>
+    <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="currentYear"></span> Nelly's Game Hub. All rights reserved.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </footer>
 
     <!-- Trophy pop-ups appear here -->
   <div class="trophy-area" id="trophyArea" role="status" aria-live="polite"></div>
+
+    <!-- Floating WhatsApp button, always within thumb reach on phones -->
+  <a href="#" class="float-whatsapp" data-whatsapp="Hello Nelly's Game Hub, I need some help." aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.5 8.5 0 018 8v.5z"/></svg>
+  </a>
 
   <script src="js/main.js"></script>
 </body>

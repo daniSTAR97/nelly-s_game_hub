@@ -123,13 +123,14 @@ const pointer = { x: 0, y: 0, isActive: false };
 
 function makeStars() {
   // Scale the canvas up on sharp screens so the stars are not blurry
-  const pixelRatio = window.devicePixelRatio || 1;
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
   starCanvas.width = window.innerWidth * pixelRatio;
   starCanvas.height = window.innerHeight * pixelRatio;
   starPen.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
-  // More stars on big screens, fewer on small ones, never more than 220
-  const starCount = Math.min(220, Math.floor((window.innerWidth * window.innerHeight) / 6500));
+  // More stars on big screens, fewer on small ones. Phones get a lower ceiling.
+  const maxStars = window.innerWidth < 760 ? 90 : 220;
+  const starCount = Math.min(maxStars, Math.floor((window.innerWidth * window.innerHeight) / 6500));
   starList = [];
 
   for (let i = 0; i < starCount; i++) {
@@ -271,7 +272,9 @@ window.addEventListener("resize", function () {
 /* ---------- 5. Flowing light waves ---------- */
 const waveCanvas = document.getElementById("waveCanvas");
 const wavePen = waveCanvas.getContext("2d");
-const waveScale = 0.5;   // draw at half size: faster, and it softens the edges for free
+// Draw at a fraction of the screen size: faster, and it softens the edges for free.
+// Phones get an even smaller canvas because they have less power to spare.
+const waveScale = window.innerWidth < 760 ? 0.35 : 0.5;
 
 // Each ribbon has its own height, size, speed and colour
 const ribbonList = [
@@ -445,7 +448,8 @@ const trophyList = {
   browsing:  { tier: "silver", title: "Menu Master",       note: "You browsed every service." },
   contacted: { tier: "gold",   title: "Player 2 Joined",   note: "You started a chat with us." },
   repair:    { tier: "gold",   title: "Repair Requested",  note: "Hit send on WhatsApp to lock it in." },
-  finale:    { tier: "silver", title: "Final Level",       note: "You made it to the bottom of the page." }
+  finale:    { tier: "silver", title: "Final Level",       note: "You made it to the bottom of the page." },
+  watcher:   { tier: "silver", title: "Front Row Seat",    note: "You pressed play on a repair video." }
 };
 
 const trophyIconMarkup =
@@ -570,3 +574,59 @@ document.getElementById("addressText").textContent = shopDetails.address
 
 // Footer year
 document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+/* ---------- 10. Videos from YouTube ---------- */
+// Add a video by pasting its ID here. For https://www.youtube.com/watch?v=AbC123xyz the ID is AbC123xyz
+const channelUrl = "";
+const shopVideos = [
+  // { id: "AbC123xyz", title: "Fixing a drifting PS5 pad" },
+  { id: "dQw4w9WgXcQ", title: "Test video" }
+];
+
+const videoGrid = document.getElementById("videoGrid");
+const videoEmpty = document.getElementById("videoEmpty");
+const channelButton = document.getElementById("channelButton");
+
+shopVideos.forEach(function (video) {
+  const card = document.createElement("button");
+  card.type = "button";
+  card.className = "video-card";
+  card.setAttribute("aria-label", "Play video: " + video.title);
+
+  const thumbnail = document.createElement("img");
+  thumbnail.src = "https://i.ytimg.com/vi/" + video.id + "/hqdefault.jpg";
+  thumbnail.alt = "";
+  thumbnail.loading = "lazy";
+
+  const playIcon = document.createElement("span");
+  playIcon.className = "video-play";
+
+  const title = document.createElement("span");
+  title.className = "video-title";
+  title.textContent = video.title;
+
+  card.append(thumbnail, playIcon, title);
+
+  card.addEventListener("click", function () {
+    const player = document.createElement("iframe");
+    player.className = "video-frame";
+    player.src = "https://www.youtube-nocookie.com/embed/" + video.id + "?autoplay=1&rel=0";
+    player.title = video.title;
+    player.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+    player.allowFullscreen = true;
+    card.replaceWith(player);
+    unlockTrophy("watcher");
+  });
+
+  videoGrid.appendChild(card);
+});
+
+// No videos yet: show the friendly note. Videos added: hide it.
+videoEmpty.hidden = shopVideos.length > 0;
+
+if (channelUrl) {
+  channelButton.href = channelUrl;
+  channelButton.target = "_blank";
+  channelButton.rel = "noopener";
+  channelButton.hidden = false;
+}
