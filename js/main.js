@@ -67,7 +67,7 @@ function finishIntro() {
 /* ---------- 2. Shop details (edit these when real info is ready) ---------- */
 const shopDetails = {
   phoneNumber: "09068466118",
-  address: ""            // leave empty until we know the real address
+  address: "2B Victory Plaza, Francis Oremeji Street, Computer Village, Ikeja"            // leave empty until we know the real address
 };
 
 // WhatsApp wants the international format: 234 instead of the 0 at the front
