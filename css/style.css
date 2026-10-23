@@ -1184,3 +1184,5 @@ body.is-loading .float-whatsapp { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .float-whatsapp::before { animation: none; }
 }
+/* Make the hidden attribute always win, even over styles like .btn { display: inline-flex } */
+[hidden] { display: none !important; }

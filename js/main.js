@@ -572,6 +572,15 @@ document.getElementById("addressText").textContent = shopDetails.address
   ? shopDetails.address
   : "Message us on WhatsApp and we will send the location";
 
+// Directions button: only appears once a real address exists
+const directionsButton = document.getElementById("directionsButton");
+if (shopDetails.address) {
+  directionsButton.href = "https://maps.app.goo.gl/ewCFU5TN2npBmadK8?g_st=iwb" + encodeURIComponent(shopDetails.address);
+  directionsButton.target = "_blank";
+  directionsButton.rel = "noopener";
+  directionsButton.hidden = false;
+}
+
 // Footer year
 document.getElementById("currentYear").textContent = new Date().getFullYear();
 
