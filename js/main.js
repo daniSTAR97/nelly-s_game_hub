@@ -1,5 +1,5 @@
 /* ==========================================================
-   Nelly's Game Hub, main script
+   Nelly Game Hub, main script
    ========================================================== */
 
 /* ---------- 1. Boot intro ---------- */
@@ -443,7 +443,7 @@ const trophyArea = document.getElementById("trophyArea");
 
 // Every trophy: how rare it is, its name, and a short line under it
 const trophyList = {
-  welcome:   { tier: "bronze", title: "Welcome, Player 1", note: "You found Nelly's Game Hub." },
+  welcome:   { tier: "bronze", title: "Welcome, Player 1", note: "You found Nelly Game Hub." },
   services:  { tier: "bronze", title: "Window Shopper",    note: "You checked out what we do." },
   browsing:  { tier: "silver", title: "Menu Master",       note: "You browsed every service." },
   contacted: { tier: "gold",   title: "Player 2 Joined",   note: "You started a chat with us." },
@@ -459,7 +459,27 @@ const trophyIconMarkup =
   '<path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>' +
   '<path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
 
-const unlockedTrophies = new Set();   // trophies already earned on this visit
+// Trophies are remembered in the visitor's browser, so a returning visitor is not shown the same ones again
+const trophyStorageKey = "nellysHubTrophies";
+
+function loadEarnedTrophies() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(trophyStorageKey));
+    return Array.isArray(saved) ? saved : [];
+  } catch (error) {
+    return [];   // storage blocked or the saved text was damaged: start fresh
+  }
+}
+
+function saveEarnedTrophies() {
+  try {
+    localStorage.setItem(trophyStorageKey, JSON.stringify(Array.from(unlockedTrophies)));
+  } catch (error) {
+    // private mode or storage full: the site still works, trophies just will not be remembered
+  }
+}
+
+const unlockedTrophies = new Set(loadEarnedTrophies());   // trophies this visitor has ever earned
 const waitingTrophies = [];           // trophies lined up to be shown
 let trophyIsShowing = false;
 
@@ -468,6 +488,7 @@ function unlockTrophy(trophyId) {
   if (!trophyList[trophyId] || unlockedTrophies.has(trophyId)) { return; }
 
   unlockedTrophies.add(trophyId);
+  saveEarnedTrophies();
   waitingTrophies.push(trophyList[trophyId]);
   showNextTrophy();
 }
@@ -543,7 +564,7 @@ repairForm.addEventListener("submit", function (event) {
   const consoleType = repairForm.elements["consoleType"].value;
   const problemNote = document.getElementById("problemNote").value.trim();
 
-  let message = "Hello Nelly's Game Hub, ";
+  let message = "Hello Nelly Game Hub, ";
   if (customerName) {
     message += "my name is " + customerName + ". ";
   }
@@ -584,28 +605,105 @@ if (shopDetails.address) {
 // Footer year
 document.getElementById("currentYear").textContent = new Date().getFullYear();
 
-/* ---------- 10. Videos from YouTube ---------- */
-// Add a video by pasting its ID here. For https://www.youtube.com/watch?v=AbC123xyz the ID is AbC123xyz
-const channelUrl = "";
+/* ---------- 10. Videos from TikTok and Instagram ---------- */
+// Paste the full link of each video. The site works out the rest.
 const shopVideos = [
-  // { id: "AbC123xyz", title: "Fixing a drifting PS5 pad" },
-  { id: "dQw4w9WgXcQ", title: "Test video" }
+     { url: "https://www.tiktok.com/@gamerepairs/video/7681234889802485013", title: "TMR upgrade... " },
+     { url: "https://www.tiktok.com/@gamerepairs/video/7685735040017239316", title: "ps5 Beeps but no power" },
+     { url: "https://www.tiktok.com/@gamerepairs/video/7677889285718314260", title: "3 beep of death on ps5 fixed..." },
+     { url: "https://www.instagram.com/p/DcHIoCJNtw2/", title: "davibes_olamide live @ nellygamehub" },
+     { url: "https://www.instagram.com/p/Dbxj6U5tasH/", title: "Stick Drift Fixed" },
+     { url: "https://www.instagram.com/p/Dbp02Q8NYHR/", title: "Ps4 won't charge controller fixed..." }
 ];
+const videosPerView = 3;   // how many videos show at once
 
 const videoGrid = document.getElementById("videoGrid");
 const videoEmpty = document.getElementById("videoEmpty");
-const channelButton = document.getElementById("channelButton");
+const shuffleButton = document.getElementById("shuffleButton");
 
+// Turns a pasted link into: which app it is from, and the web address of that app's video player
+function readVideoLink(link) {
+  let address;
+  try {
+    address = new URL(link);
+  } catch (error) {
+    return null;   // not a proper web address
+  }
+
+  const host = address.hostname.replace("www.", "");
+
+  if (host === "tiktok.com") {
+    const match = address.pathname.match(/\/video\/(\d+)/);
+    if (match) {
+      return {
+        platform: "TikTok",
+        playerUrl: "https://www.tiktok.com/player/v1/" + match[1] + "?autoplay=1&rel=0&description=1"
+      };
+    }
+  }
+
+  if (host === "instagram.com") {
+    const match = address.pathname.match(/\/(reel|p|tv)\/([\w-]+)/);
+    if (match) {
+      return {
+        platform: "Instagram",
+        playerUrl: "https://www.instagram.com/" + match[1] + "/" + match[2] + "/embed"
+      };
+    }
+  }
+
+  return null;
+}
+
+// Keep only the videos whose links we can understand, and warn about the rest
+const playableVideos = [];
 shopVideos.forEach(function (video) {
+  const details = readVideoLink(video.url);
+  if (details) {
+    playableVideos.push(Object.assign({}, video, details));
+  } else {
+    console.warn("Could not read this video link: " + video.url);
+  }
+});
+
+// A fair shuffle: swap each item with a random one before it
+function shuffleList(list) {
+  const copy = list.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const held = copy[i];
+    copy[i] = copy[j];
+    copy[j] = held;
+  }
+  return copy;
+}
+
+// The shuffled pile we deal from. When it runs out we shuffle again,
+// so videos do not come back until the others have had a turn.
+let videoPile = [];
+
+function dealVideos() {
+  const wanted = Math.min(videosPerView, playableVideos.length);
+  const batch = [];
+  while (batch.length < wanted) {
+    if (videoPile.length === 0) { videoPile = shuffleList(playableVideos); }
+    const candidate = videoPile.pop();
+    if (!batch.includes(candidate)) { batch.push(candidate); }
+  }
+  return batch;
+}
+
+function makeVideoCard(video, position) {
   const card = document.createElement("button");
   card.type = "button";
   card.className = "video-card";
-  card.setAttribute("aria-label", "Play video: " + video.title);
+  card.dataset.platform = video.platform;
+  card.style.setProperty("--i", position);
+  card.setAttribute("aria-label", "Play " + video.platform + " video: " + video.title);
 
-  const thumbnail = document.createElement("img");
-  thumbnail.src = "https://i.ytimg.com/vi/" + video.id + "/hqdefault.jpg";
-  thumbnail.alt = "";
-  thumbnail.loading = "lazy";
+  const platformTag = document.createElement("span");
+  platformTag.className = "video-platform";
+  platformTag.textContent = video.platform;
 
   const playIcon = document.createElement("span");
   playIcon.className = "video-play";
@@ -614,12 +712,12 @@ shopVideos.forEach(function (video) {
   title.className = "video-title";
   title.textContent = video.title;
 
-  card.append(thumbnail, playIcon, title);
+  card.append(platformTag, playIcon, title);
 
   card.addEventListener("click", function () {
     const player = document.createElement("iframe");
     player.className = "video-frame";
-    player.src = "https://www.youtube-nocookie.com/embed/" + video.id + "?autoplay=1&rel=0";
+    player.src = video.playerUrl;
     player.title = video.title;
     player.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
     player.allowFullscreen = true;
@@ -627,15 +725,66 @@ shopVideos.forEach(function (video) {
     unlockTrophy("watcher");
   });
 
-  videoGrid.appendChild(card);
-});
-
-// No videos yet: show the friendly note. Videos added: hide it.
-videoEmpty.hidden = shopVideos.length > 0;
-
-if (channelUrl) {
-  channelButton.href = channelUrl;
-  channelButton.target = "_blank";
-  channelButton.rel = "noopener";
-  channelButton.hidden = false;
+  return card;
 }
+
+function showVideos() {
+  videoGrid.replaceChildren();
+  dealVideos().forEach(function (video, position) {
+    videoGrid.appendChild(makeVideoCard(video, position));
+  });
+}
+
+if (playableVideos.length > 0) {
+  videoEmpty.hidden = true;
+  showVideos();                       // a different set on every visit
+  if (playableVideos.length > videosPerView) {
+    shuffleButton.hidden = false;     // only useful when there are more videos than fit on screen
+    shuffleButton.addEventListener("click", showVideos);
+  }
+}
+/* ---------- 11. Opening hours and the open or closed badge ---------- */
+const openingHours = {
+  openDays: [1, 2, 3, 4, 5, 6],   // 0 = Sunday, 1 = Monday ... 6 = Saturday
+  opensAt: 8,                     // 24-hour clock, so 8 is 8:00 am
+  closesAt: 17,                   // 17 is 5:00 pm
+  label: "Monday to Saturday, 8:00 am to 5:00 pm"
+};
+
+const hoursText = document.getElementById("hoursText");
+const openStatus = document.getElementById("openStatus");
+hoursText.textContent = openingHours.label;
+
+// What day and time is it at the shop right now? Always Lagos time, wherever the visitor is.
+function getShopTime() {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Africa/Lagos",
+    weekday: "short",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false
+  }).formatToParts(new Date());
+
+  const found = {};
+  parts.forEach(function (part) { found[part.type] = part.value; });
+
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  return {
+    day: dayNames.indexOf(found.weekday),
+    minutesIntoDay: (Number(found.hour) % 24) * 60 + Number(found.minute)
+  };
+}
+
+function updateOpenStatus() {
+  const now = getShopTime();
+  const isOpenToday = openingHours.openDays.includes(now.day);
+  const isOpen = isOpenToday &&
+    now.minutesIntoDay >= openingHours.opensAt * 60 &&
+    now.minutesIntoDay < openingHours.closesAt * 60;
+
+  openStatus.textContent = isOpen ? "Open now" : "Closed now";
+  openStatus.classList.toggle("is-open", isOpen);
+}
+
+updateOpenStatus();
+setInterval(updateOpenStatus, 60000);   // re-check every minute for people who leave the page open

@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Nelly's Game Hub">
+  <meta property="og:title" content="Nelly Game Hub">
   <meta property="og:description" content="Game installation, pad and console repairs, and console sales. Chat with us on WhatsApp.">
   <meta property="og:image" content="https://nelly-sgamehub.vercel.app/images/share.png">
   <meta name="twitter:card" content="summary_large_image">
-  <title>Nelly's Game Hub</title>
+  <title>Nelly Game Hub</title>
   <link rel="icon" type="image/png" href="images/favicon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +16,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
+    <!-- Vercel Analytics -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
 
 <body class="is-loading">
@@ -31,7 +36,7 @@
           <img src="images/logo.png" alt="" class="boot-logo">
         </div>
 
-        <p class="boot-title">Nelly's Game Hub</p>
+        <p class="boot-title">Nelly Game Hub</p>
 
         <div class="boot-beam">
           <div class="boot-beam-fill" id="bootBeamFill"></div>
@@ -63,9 +68,9 @@
   <header class="site-header">
     <div class="container header-inner">
 
-      <a href="#top" class="brand" aria-label="Nelly's Game Hub home">
+      <a href="#top" class="brand" aria-label="Nelly Game Hub home">
         <img src="images/logo.png" alt="" class="brand-logo" width="44" height="44">
-        <span class="brand-name">Nelly's Game Hub</span>
+        <span class="brand-name">Nelly Game Hub</span>
       </a>
 
       <nav class="main-nav" id="mainNav" aria-label="Main">
@@ -76,7 +81,7 @@
       </nav>
 
       <a href="#" class="btn btn-small btn-primary header-cta"
-         data-whatsapp="Hello Nelly's Game Hub, I need some help.">Chat on WhatsApp</a>
+         data-whatsapp="Hello Nelly Game Hub, I need some help.">Chat on WhatsApp</a>
 
       <button class="menu-button" id="menuButton" aria-label="Open menu"
               aria-expanded="false" aria-controls="mainNav">
@@ -108,7 +113,7 @@
 
           <div class="hero-actions">
             <a href="#" class="btn btn-primary"
-               data-whatsapp="Hello Nelly's Game Hub, I need some help.">Chat on WhatsApp</a>
+               data-whatsapp="Hello Nelly Game Hub, I need some help.">Chat on WhatsApp</a>
             <a href="#services" class="btn btn-ghost">See what we do</a>
           </div>
         </div>
@@ -116,7 +121,7 @@
         <div class="hero-visual">
           <div class="hero-glow"></div>
           <div class="hero-ring">
-            <img src="images/logo.png" alt="Nelly's Game Hub logo" class="hero-logo" width="300" height="300">
+            <img src="images/logo.png" alt="Nelly Game Hub logo" class="hero-logo" width="300" height="300">
           </div>
         </div>
 
@@ -192,10 +197,12 @@
         </div>
 
         <div class="video-grid reveal" id="videoGrid"></div>
-        <p class="video-empty" id="videoEmpty">New videos are on the way. Check back soon.</p>
+        <p class="video-empty" id="videoEmpty">Videos are coming to this page. Until then, you can watch us on TikTok and Instagram.</p>
 
         <div class="video-footer">
-          <a href="#" class="btn btn-ghost" id="channelButton" hidden>Subscribe on YouTube</a>
+          <button type="button" class="btn btn-ghost" id="shuffleButton" hidden>Show other videos</button>
+          <a href="https://www.tiktok.com/@gamerepairs" class="btn btn-ghost" target="_blank" rel="noopener">More on TikTok</a>
+          <a href="https://www.instagram.com/nelly_game_hub" class="btn btn-ghost" target="_blank" rel="noopener">More on Instagram</a>
         </div>
 
       </div>
@@ -274,13 +281,13 @@
           <article class="shop-tile reveal">
             <h3>Consoles</h3>
             <p>PlayStation, Xbox and more. Ask what we have right now.</p>
-            <a href="#" class="btn btn-ghost btn-small" data-whatsapp="Hello Nelly's Game Hub, I want to buy a console. What do you have in stock and how much?">Ask for price</a>
+            <a href="#" class="btn btn-ghost btn-small" data-whatsapp="Hello Nelly Game Hub, I want to buy a console. What do you have in stock and how much?">Ask for price</a>
           </article>
 
           <article class="shop-tile reveal">
             <h3>Game pads</h3>
             <p>Replacement and spare pads for your console.</p>
-            <a href="#" class="btn btn-ghost btn-small" data-whatsapp="Hello Nelly's Game Hub, I want to buy a game pad. What do you have in stock and how much?">Ask for price</a>
+            <a href="#" class="btn btn-ghost btn-small" data-whatsapp="Hello Nelly Game Hub, I want to buy a game pad. What do you have in stock and how much?">Ask for price</a>
           </article>
         </div>
 
@@ -297,7 +304,7 @@
           <p class="contact-text">The fastest way to reach us is WhatsApp. You can also call.</p>
 
           <div class="contact-actions">
-            <a href="#" class="btn btn-primary" data-whatsapp="Hello Nelly's Game Hub, I need some help.">Chat on WhatsApp</a>
+            <a href="#" class="btn btn-primary" data-whatsapp="Hello Nelly Game Hub, I need some help.">Chat on WhatsApp</a>
             <a href="#" class="btn btn-ghost" id="callButton">Call us</a>
             <a href="#" class="btn btn-ghost" id="directionsButton" hidden>Get directions</a>
           </div>
@@ -312,6 +319,18 @@
             <span class="contact-label">Shop location</span>
             <span class="contact-value" id="addressText"></span>
           </li>
+          <li>
+            <span class="contact-label">Opening hours</span>
+            <span class="contact-value" id="hoursText"></span>
+            <span class="open-status" id="openStatus"></span>
+          </li>
+          <li>
+            <span class="contact-label">Follow us</span>
+            <span class="social-links">
+              <a href="https://www.instagram.com/nelly_game_hub" target="_blank" rel="noopener">Instagram</a>
+              <a href="https://www.tiktok.com/@gamerepairs" target="_blank" rel="noopener">TikTok</a>
+            </span>
+          </li>
         </ul>
 
       </div>
@@ -321,7 +340,7 @@
     <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>&copy; <span id="currentYear"></span> Nelly's Game Hub. All rights reserved.</p>
+      <p>&copy; <span id="currentYear"></span> Nelly Game Hub. All rights reserved.</p>
       <a href="#top">Back to top</a>
     </div>
   </footer>
@@ -330,7 +349,7 @@
   <div class="trophy-area" id="trophyArea" role="status" aria-live="polite"></div>
 
     <!-- Floating WhatsApp button, always within thumb reach on phones -->
-  <a href="#" class="float-whatsapp" data-whatsapp="Hello Nelly's Game Hub, I need some help." aria-label="Chat on WhatsApp">
+  <a href="#" class="float-whatsapp" data-whatsapp="Hello Nelly Game Hub, I need some help." aria-label="Chat on WhatsApp">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.5 8.5 0 018 8v.5z"/></svg>
   </a>
 

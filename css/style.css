@@ -1,5 +1,5 @@
 /* ==========================================================
-   Nelly's Game Hub
+   Nelly Game Hub
    ========================================================== */
 
 /* ---------- 1. Colours and fonts, change the look here ---------- */
@@ -1048,12 +1048,7 @@ textarea { resize: vertical; }
   box-shadow: 0 0 26px rgba(79, 216, 255, 0.2);
   outline: none;
 }
-.video-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
+
 .video-card:hover img { transform: scale(1.05); }
 
 /* Dark fade at the bottom so the title is readable on any thumbnail */
@@ -1186,3 +1181,97 @@ body.is-loading .float-whatsapp { display: none; }
 }
 /* Make the hidden attribute always win, even over styles like .btn { display: inline-flex } */
 [hidden] { display: none !important; }
+
+/* ---------- Open or closed badge ---------- */
+.open-status {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-family: var(--pixel-font);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ff7a7a;
+}
+.open-status::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.open-status.is-open { color: #3ddc84; }
+.open-status.is-open::before { animation: status-pulse 1.8s ease-in-out infinite; }
+@keyframes status-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(61, 220, 132, 0.6); }
+  50%      { box-shadow: 0 0 0 7px rgba(61, 220, 132, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .open-status.is-open::before { animation: none; }
+}
+
+/* ---------- Social videos: tall cards, shuffle row, follow links ---------- */
+.video-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+  justify-content: center;
+}
+.video-card, .video-frame { aspect-ratio: 9 / 16; }
+
+.video-card[data-platform="TikTok"] {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(79, 216, 255, 0.28), transparent 55%),
+    radial-gradient(circle at 85% 90%, rgba(255, 60, 110, 0.22), transparent 55%),
+    #0a0e1c;
+}
+.video-card[data-platform="Instagram"] {
+  background:
+    radial-gradient(circle at 80% 15%, rgba(190, 80, 255, 0.28), transparent 55%),
+    radial-gradient(circle at 15% 90%, rgba(255, 150, 60, 0.22), transparent 55%),
+    #0a0e1c;
+}
+.video-platform {
+  position: absolute;
+  top: 0.9rem;
+  left: 0.9rem;
+  z-index: 1;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  background: rgba(7, 8, 12, 0.6);
+  font-family: var(--pixel-font);
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Cards rise in one after the other each time a new set is shown */
+.video-card { animation: video-in 0.5s ease backwards; animation-delay: calc(var(--i, 0) * 0.12s); }
+@keyframes video-in {
+  from { opacity: 0; transform: translateY(18px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .video-card { animation: none; }
+}
+
+.video-footer { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; }
+
+.social-links { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; font-size: 1.2rem; font-weight: 500; }
+.social-links a { color: var(--text-main); border-bottom: 1px solid rgba(79, 216, 255, 0.4); transition: color 0.2s ease, border-color 0.2s ease; }
+.social-links a:hover { color: var(--cyan); border-color: var(--cyan); }
+
+/* On phones the videos become a row you swipe through, instead of a very long stack */
+@media (max-width: 760px) {
+  .video-grid {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 72%;
+    justify-content: start;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.6rem;
+  }
+  .video-card, .video-frame { scroll-snap-align: center; }
+  .video-footer .btn { flex: 1 1 100%; }
+}
