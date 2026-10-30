@@ -1275,3 +1275,116 @@ body.is-loading .float-whatsapp { display: none; }
   .video-card, .video-frame { scroll-snap-align: center; }
   .video-footer .btn { flex: 1 1 100%; }
 }
+
+/* ---------- Start screen ---------- */
+/* While the start screen is up, the intro behind it stays frozen */
+body.is-waiting .boot-intro,
+body.is-waiting .boot-intro *,
+body.is-waiting .boot-intro *::before,
+body.is-waiting .boot-intro *::after {
+  animation-play-state: paused;
+}
+
+.start-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;              /* above the boot intro, which is 999 */
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: radial-gradient(ellipse at center, #0a1226 0%, #02030a 70%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.start-gate.is-leaving { opacity: 0; transform: scale(1.04); pointer-events: none; }
+
+.gate-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 1.5rem;
+  text-align: center;
+  animation: gate-in 0.9s ease backwards;
+}
+.gate-logo {
+  width: 110px;
+  height: 110px;
+  filter: drop-shadow(0 0 18px var(--blue-glow));
+  animation: logo-pulse 2.4s ease-in-out infinite;
+}
+.gate-start {
+  padding: 0.6rem 1rem;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--text-main);
+  font-family: var(--pixel-font);
+  font-size: clamp(1rem, 4.4vw, 1.5rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 0 16px var(--cyan);
+  animation: gate-blink 1.4s steps(2, start) infinite;
+}
+.gate-start:focus-visible { outline: 2px solid var(--cyan); outline-offset: 6px; }
+.gate-hint { margin: 0; color: var(--text-soft); font-size: 0.95rem; }
+.gate-skip {
+  padding: 0.5rem;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--text-soft);
+  font: inherit;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.2s ease;
+}
+.gate-skip:hover, .gate-skip:focus-visible { color: var(--cyan); }
+
+@keyframes gate-blink { 50% { opacity: 0.25; } }
+@keyframes gate-in { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) {
+  .gate-start, .gate-logo { animation: none; }
+}
+
+/* ---------- Sound on and off button ---------- */
+.sound-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-main);
+  background: rgba(10, 14, 28, 0.8);
+  border: 1px solid rgba(79, 216, 255, 0.3);
+  border-radius: 50%;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.sound-toggle:hover, .sound-toggle:focus-visible {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: 0 0 16px rgba(79, 216, 255, 0.3);
+}
+.sound-toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sound-toggle[aria-pressed="true"] .icon-cross { display: none; }
+.sound-toggle[aria-pressed="false"] .icon-waves { display: none; }
+body.is-loading .sound-toggle { display: none; }
+
+@media (max-width: 760px) {
+  .sound-toggle { bottom: 5.4rem; }                      /* sits above the floating WhatsApp button */
+  .trophy { width: min(340px, calc(100vw - 6.5rem)); }   /* narrower, so a trophy never covers the buttons on the right */
+}

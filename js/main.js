@@ -2,7 +2,90 @@
    Nelly Game Hub, main script
    ========================================================== */
 
-/* ---------- 1. Boot intro ---------- */
+/* ---------- 0. Sound engine ---------- */
+const soundStorageKey = "nellysHubSound";
+const masterVolume = 2;          // the loudness the sound samples were approved at
+
+let audioContext = null;         // created on the first press, never before
+let masterGain = null;           // one volume knob that every sound passes through
+
+function loadSoundChoice() {
+  try {
+    return localStorage.getItem(soundStorageKey) !== "off";
+  } catch (error) {
+    return true;                 // storage blocked: sound is on by default
+  }
+}
+
+function saveSoundChoice() {
+  try {
+    localStorage.setItem(soundStorageKey, soundIsOn ? "on" : "off");
+  } catch (error) {
+    // ignore: the choice just will not be remembered
+  }
+}
+
+let soundIsOn = loadSoundChoice();
+
+// Browsers only allow sound after a press or tap, so this must be called from inside one
+function unlockAudio() {
+  if (!audioContext) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) { return; }   // very old browser: the site simply stays silent
+
+    audioContext = new AudioContextClass();
+    masterGain = audioContext.createGain();
+    masterGain.gain.value = soundIsOn ? masterVolume : 0;
+    masterGain.connect(audioContext.destination);
+  }
+
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+}
+
+// Play any sound from the sound bank by name, for example playSound("select")
+// Play any sound from the sound bank by name, for example playSound("select")
+// The optional second number starts it that many seconds from now
+function playSound(name, delaySeconds) {
+  if (!soundIsOn || !audioContext || !soundBank[name]) { return; }
+  soundBank[name](audioContext, masterGain, audioContext.currentTime + (delaySeconds || 0));
+}
+
+const soundToggle = document.getElementById("soundToggle");
+
+function refreshSoundButton() {
+  soundToggle.setAttribute("aria-pressed", String(soundIsOn));
+  soundToggle.setAttribute(
+    "aria-label",
+    soundIsOn ? "Sound is on. Press to turn it off." : "Sound is off. Press to turn it on."
+  );
+}
+
+function setSoundOn(shouldBeOn) {
+  soundIsOn = shouldBeOn;
+  saveSoundChoice();
+  refreshSoundButton();
+
+  if (shouldBeOn) { unlockAudio(); }
+
+  if (masterGain) {
+    const now = audioContext.currentTime;
+    masterGain.gain.cancelScheduledValues(now);
+    if (shouldBeOn) {
+      masterGain.gain.setValueAtTime(masterVolume, now);
+    } else {
+      masterGain.gain.setTargetAtTime(0, now, 0.05);   // fade out quickly instead of cutting off
+    }
+  }
+
+  if (shouldBeOn) { playSound("select"); }
+}
+
+soundToggle.addEventListener("click", function () { setSoundOn(!soundIsOn); });
+refreshSoundButton();
+
+/* ---------- 1. Start screen and boot intro ---------- */
 const bootIntro = document.getElementById("bootIntro");
 const bootBeamFill = document.getElementById("bootBeamFill");
 const bootSparks = document.getElementById("bootSparks");
@@ -19,50 +102,83 @@ for (let i = 0; i < 28; i++) {
   bootSparks.appendChild(spark);
 }
 
-const minimumLoadTime = 2600;          // the intro always plays for at least this long
-const loadStartedAt = Date.now();
-
+const minimumLoadTime = 2600;
+let loadStartedAt = 0;               // set at the moment the visitor presses start
 let shownPercent = 0;
 let pageHasFinishedLoading = false;
 
-// The browser tells us when images, fonts and everything else are ready
 window.addEventListener("load", function () {
   pageHasFinishedLoading = true;
 });
 
-const progressTimer = setInterval(function () {
-  const timeSpent = Date.now() - loadStartedAt;
-  const canGoToFull = pageHasFinishedLoading && timeSpent >= minimumLoadTime;
+function startBootIntro() {
+  document.body.classList.remove("is-waiting");   // the frozen intro animations start playing
+  loadStartedAt = Date.now();
 
-  // Climb to 90 on its own, only go past 90 once the page is truly ready
-  const limit = canGoToFull ? 100 : 90;
+  const progressTimer = setInterval(function () {
+    const timeSpent = Date.now() - loadStartedAt;
+    const canGoToFull = pageHasFinishedLoading && timeSpent >= minimumLoadTime;
+    const limit = canGoToFull ? 100 : 90;
 
-  if (shownPercent < limit) {
-    shownPercent = Math.min(limit, shownPercent + 1 + Math.floor(Math.random() * 3));
-    bootBeamFill.style.width = shownPercent + "%";
-  }
+    if (shownPercent < limit) {
+      shownPercent = Math.min(limit, shownPercent + 1 + Math.floor(Math.random() * 3));
+      bootBeamFill.style.width = shownPercent + "%";
+    }
 
-  if (shownPercent >= 100) {
-    clearInterval(progressTimer);
-    finishIntro();
-  }
-}, 55);
+    if (shownPercent >= 100) {
+      clearInterval(progressTimer);
+      finishIntro();
+    }
+  }, 55);
+}
 
 function finishIntro() {
-  // Short pause on the full beam, then flash and fade out
   setTimeout(function () {
     bootIntro.classList.add("is-done");
     document.body.classList.remove("is-loading");
-
-    // Give the first trophy once the page has settled in
+    playSound("bootImpact");                       // lands exactly on the flash
     setTimeout(function () { unlockTrophy("welcome"); }, 1500);
   }, 450);
 
-  // Once the fade is over, remove the intro completely
-  setTimeout(function () {
-    bootIntro.classList.add("is-gone");
-  }, 1700);
+  setTimeout(function () { bootIntro.classList.add("is-gone"); }, 1700);
 }
+
+// The start screen
+const startGate = document.getElementById("startGate");
+const startButton = document.getElementById("startButton");
+const skipSoundButton = document.getElementById("skipSoundButton");
+
+function leaveStartScreen(withSound) {
+  if (startGate.classList.contains("is-leaving")) { return; }   // ignore double taps
+
+  soundIsOn = withSound;
+  saveSoundChoice();
+  refreshSoundButton();
+
+  if (withSound) {
+    unlockAudio();
+    playSound("bootRise");
+  }
+
+  startGate.classList.add("is-leaving");
+  setTimeout(function () { startGate.remove(); }, 600);
+  startBootIntro();
+}
+
+startGate.addEventListener("click", function () { leaveStartScreen(true); });
+
+skipSoundButton.addEventListener("click", function (event) {
+  event.stopPropagation();           // do not let this tap also count as "start with sound"
+  leaveStartScreen(false);
+});
+
+if (soundIsOn) {
+  startButton.focus();               // so Enter or Space also works on a keyboard
+} else {
+  // The visitor chose silence before, so skip the start screen and respect that
+  startGate.remove();
+  startBootIntro();
+}``
 
 /* ---------- 2. Shop details (edit these when real info is ready) ---------- */
 const shopDetails = {
@@ -95,6 +211,9 @@ const menuButton = document.getElementById("menuButton");
 const mainNav = document.getElementById("mainNav");
 
 function setMenuOpen(shouldOpen) {
+  const wasOpen = mainNav.classList.contains("is-open");
+  if (shouldOpen !== wasOpen) { playSound(shouldOpen ? "menuOpen" : "menuClose"); }
+
   mainNav.classList.toggle("is-open", shouldOpen);
   menuButton.setAttribute("aria-expanded", String(shouldOpen));
   menuButton.setAttribute("aria-label", shouldOpen ? "Close menu" : "Open menu");
@@ -352,21 +471,16 @@ const serviceTiles = Array.from(serviceMenu.querySelectorAll(".service-tile"));
 const deviceHasMouse = window.matchMedia("(hover: hover)").matches;
 
 const visitedTiles = new Set();
+let currentTile = null;   // the tile that is focused right now, so we only tick when it changes
+let lastScrollTime = 0;   // when the page last scrolled
 
-// Marks one tile as the focused one (or none), and tells the menu if anything is focused
+// Scrolling slides tiles under a resting mouse, and that should not make a row of ticks
+window.addEventListener("scroll", function () { lastScrollTime = Date.now(); }, { passive: true });
+
 function focusTile(chosenTile) {
-  serviceTiles.forEach(function (tile) {
-    tile.classList.toggle("is-focused", tile === chosenTile);
-  });
-  serviceMenu.classList.toggle("is-browsing", Boolean(chosenTile));
-
-  // Visit every tile at least once to earn a trophy
-  if (chosenTile) {
-    visitedTiles.add(chosenTile);
-    if (visitedTiles.size === serviceTiles.length) {
-      unlockTrophy("browsing");
-    }
-  }
+  const justScrolled = Date.now() - lastScrollTime < 200;
+  if (chosenTile && chosenTile !== currentTile && !justScrolled) { playSound("tick"); }
+  currentTile = chosenTile;
 }
 
 serviceTiles.forEach(function (tile, position) {
@@ -482,6 +596,8 @@ function saveEarnedTrophies() {
 const unlockedTrophies = new Set(loadEarnedTrophies());   // trophies this visitor has ever earned
 const waitingTrophies = [];           // trophies lined up to be shown
 let trophyIsShowing = false;
+// Which sound each trophy rank plays
+const trophySoundNames = { bronze: "trophyBronze", silver: "trophySilver", gold: "trophyGold" };
 
 // Call this from anywhere with a trophy name, for example unlockTrophy("welcome")
 function unlockTrophy(trophyId) {
@@ -512,6 +628,7 @@ function showNextTrophy() {
   card.querySelector(".trophy-name").textContent = trophy.title;
   card.querySelector(".trophy-note").textContent = trophy.note;
   trophyArea.appendChild(card);
+  playSound(trophySoundNames[trophy.tier], 0.25);   // a quarter second late, so it follows any button click sound
 
   // After 4.5 seconds slide it out, then remove it and show the next one in line
   setTimeout(function () { card.classList.add("is-leaving"); }, 4500);
@@ -788,3 +905,29 @@ function updateOpenStatus() {
 
 updateOpenStatus();
 setInterval(updateOpenStatus, 60000);   // re-check every minute for people who leave the page open
+
+/* ---------- 12. Sounds for buttons, form chips and the logo ---------- */
+// One listener covers every button on the page, now and in the future
+document.addEventListener("click", function (event) {
+  if (event.target.closest(".btn, .tile-action, .float-whatsapp")) {
+    playSound("select");
+  }
+});
+
+// Picking an option chip in the booking form
+document.querySelectorAll(".chips input").forEach(function (radio) {
+  radio.addEventListener("change", function () { playSound("chip"); });
+});
+
+// The hero logo wakes up when the mouse touches it (mouse devices only, and not more than once every 2 seconds)
+const heroLogo = document.querySelector(".hero-logo");
+if (heroLogo && deviceHasMouse) {
+  let logoSoundReadyAt = 0;
+
+  heroLogo.addEventListener("mouseenter", function () {
+    const now = Date.now();
+    if (now < logoSoundReadyAt) { return; }
+    logoSoundReadyAt = now + 2000;
+    playSound("logoHover");
+  });
+}
